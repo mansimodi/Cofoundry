@@ -16,6 +16,7 @@
     --accent: #211d17;
     --accent-soft: #ece3d0;
     --success: #4a7a52; --success-bg: #e6efe4;
+    --link: #2f5c8a; --link-bg: #e5edf5;
     --radius: 18px;
     --radius-sm: 14px;
     --shadow: none;
@@ -42,6 +43,7 @@
       --accent: #f2ece0;
       --accent-soft: #3a3427;
       --success: #7fbf8a; --success-bg: #223625;
+      --link: #7fb0e0; --link-bg: #1e2a3a;
       --c1: #d99b6c; --c1-bg: #3a2c1f;
       --c2: #8fae8f; --c2-bg: #223126;
       --c3: #d6b567; --c3-bg: #3a3320;
@@ -128,8 +130,15 @@
     padding: 14px 16px;
   }
   .card .pname { font-family: var(--serif); font-weight: 700; font-size: 1.05rem; margin: 0 0 4px; }
-  .card .pname a { color: inherit; text-decoration: none; }
-  .card .pname a:hover { text-decoration: underline; }
+  .card .pname a { color: var(--link); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent); text-underline-offset: 2px; }
+  .card .pname a:hover { text-decoration-color: var(--link); }
+  .live-demo-badge {
+    display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; color: var(--link);
+    text-decoration: none; padding: 2px 8px; border-radius: 100px; background: var(--link-bg);
+    font-weight: 600;
+  }
+  .live-demo-badge:hover { text-decoration: underline; }
+  .live-demo-badge::before { content: "↗"; font-size: 0.8rem; }
   .card .pdesc { color: var(--text-2); font-size: 0.83rem; margin: 0 0 10px; }
   .card .pmeta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
   .author-chip {
@@ -357,6 +366,7 @@ function renderCategoryView(filterText, filterCat) {
         </div>
         <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
           ${flagged ? '<span class="badge flag-badge">Attachment-based</span>' : ''}
+          ${(() => { const dl = (p.link || '').trim().split(' ')[0]; return dl && dl.startsWith('http') ? `<a class="live-demo-badge" href="${escapeHtml(dl)}" target="_blank" rel="noopener noreferrer">Live demo</a>` : ''; })()}
           ${p.teams_link ? `<a class="teams-link" href="${escapeHtml(p.teams_link)}" target="_blank" rel="noopener noreferrer">View original post</a>
           <button type="button" class="copy-btn" onclick="copyLink('${escapeHtml(p.teams_link).replace(/'/g, "\\'")}', this)">Copy link</button>` : ''}
         </div>
@@ -433,7 +443,8 @@ function renderAuthorsView(filterText, filterCat) {
             ${a.projects.map(p => `<div class="pl-item-wrap">
               <div class="pl-item">
                 <span class="cat-badge" data-cat="${escapeHtml(p.category)}" style="background:var(--${catColor[p.category]}-bg);color:var(--${catColor[p.category]})">${escapeHtml(p.category)}</span>
-                <span>${linkify(p)}</span>
+                <span>${escapeHtml(p.project)}</span>
+                ${(() => { const dl = (p.link || '').trim().split(' ')[0]; return dl && dl.startsWith('http') ? `<a class="live-demo-badge" href="${escapeHtml(dl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Live demo</a>` : ''; })()}
                 ${p.teams_link ? `<a class="teams-link" href="${escapeHtml(p.teams_link)}" target="_blank" rel="noopener noreferrer" style="font-size:0.68rem">Teams post</a><button type="button" class="copy-btn" style="padding:0 6px" onclick="event.stopPropagation(); copyLink('${escapeHtml(p.teams_link).replace(/'/g, "\\'")}', this)">Copy link</button>` : ''}
               </div>
               ${p.teams_link ? `<input class="link-field" type="text" readonly value="${escapeHtml(p.teams_link)}" onclick="event.stopPropagation(); this.select()" onfocus="this.select()">` : ''}
